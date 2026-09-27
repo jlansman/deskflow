@@ -11,9 +11,9 @@
 #include "base/BaseException.h"
 
 /**
- * @brief The ScreenException class, generic screen exception
+ * @brief The ComputerException class, generic screen exception
  */
-class ScreenException : public BaseException
+class ComputerException : public BaseException
 {
   using BaseException::BaseException;
 };
@@ -21,9 +21,9 @@ class ScreenException : public BaseException
 /**
  * @brief ScreenOpenFailureException - Thrown when a screen cannot be opened or initialized.
  */
-class ScreenOpenFailureException : public ScreenException
+class ScreenOpenFailureException : public ComputerException
 {
-  using ScreenException::ScreenException;
+  using ComputerException::ComputerException;
 
 protected:
   QString getWhat() const throw() override;

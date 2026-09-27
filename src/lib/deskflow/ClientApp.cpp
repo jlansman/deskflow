@@ -16,7 +16,7 @@
 #include "common/PlatformInfo.h"
 #include "common/Settings.h"
 #include "deskflow/Computer.h"
-#include "deskflow/ScreenException.h"
+#include "deskflow/ComputerException.h"
 #include "deskflow/ipc/CoreIpc.h"
 #include "net/NetworkAddress.h"
 #include "net/SocketException.h"
