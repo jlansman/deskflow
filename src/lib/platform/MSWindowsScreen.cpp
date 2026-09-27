@@ -30,6 +30,8 @@
 
 #include <Shlobj.h>
 #include <algorithm>
+#include <chrono>
+#include <cstdlib>
 #include <comutil.h>
 #include <string.h>
 
@@ -290,6 +292,7 @@ void MSWindowsScreen::leave()
   if (m_isPrimary) {
     LOG_VERBOSE("centering cursor on leave: %+d, %+d", m_xCenter, m_yCenter);
     warpCursor(m_xCenter, m_yCenter);
+    m_leaveTime = std::chrono::steady_clock::now();
 
     // disable special key sequences on win95 family
     enableSpecialKeys(false);
@@ -1262,6 +1265,20 @@ bool MSWindowsScreen::onMouseMove(int32_t mx, int32_t my)
         -y + bogusZoneSize > m_yCenter - m_y || y + bogusZoneSize > m_y + m_h - m_yCenter) {
 
       LOG_DEBUG("dropped bogus delta motion: %+d,%+d", x, y);
+
+      // this event's position was just recorded as the delta baseline by
+      // saveMousePosition() above; a dropped event must not poison it, since
+      // the next event may be the warp echo at the center -- rebase there.
+      saveMousePosition(m_xCenter, m_yCenter);
+    } else if (isStaleMotionAfterLeave(mx, my)) {
+      // a hardware event generated just before leave() warped the cursor to
+      // the center can still be delivered here afterwards; its position is
+      // relative to the pre-warp cursor near the edge we just left, so the
+      // delta computed against the center baseline teleports the client
+      // cursor away from the entry point. drop it and rebase for the same
+      // reason as above.
+      LOG_DEBUG("dropped stale motion after leave: %+d,%+d at %+d,%+d", x, y, mx, my);
+      saveMousePosition(m_xCenter, m_yCenter);
     } else {
       // send motion
       sendEvent(EventTypes::PrimaryScreenMotionOnSecondary, MotionInfo::alloc(x, y));
@@ -1424,6 +1441,25 @@ void MSWindowsScreen::nextMark()
 bool MSWindowsScreen::ignore() const
 {
   return (m_mark != m_markReceived);
+}
+
+bool MSWindowsScreen::isStaleMotionAfterLeave(int32_t mx, int32_t my) const
+{
+  constexpr auto kStaleMotionGracePeriod = std::chrono::milliseconds(500);
+  if (std::chrono::steady_clock::now() - m_leaveTime > kStaleMotionGracePeriod) {
+    return false;
+  }
+
+  // While off screen, the cursor is parked at the warp center, so a genuine
+  // relayed event reports a position within one event's travel of it. An
+  // event generated before leave() warped the cursor still reports a
+  // position near the edge we left on that axis -- at least two thirds of
+  // the way from center to edge.
+  constexpr int32_t kStaleZoneNumerator = 2;
+  constexpr int32_t kStaleZoneDenominator = 3;
+  int32_t const staleZoneX = m_xCenter * kStaleZoneNumerator / kStaleZoneDenominator;
+  int32_t const staleZoneY = m_yCenter * kStaleZoneNumerator / kStaleZoneDenominator;
+  return std::abs(mx - m_xCenter) > staleZoneX || std::abs(my - m_yCenter) > staleZoneY;
 }
 
 void MSWindowsScreen::updateScreenShape()
