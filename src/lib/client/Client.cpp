@@ -662,11 +662,8 @@ void Client::handleClipboardGrabbed(const Event &event)
   m_sentClipboard[info->m_id] = false;
   m_timeClipboard[info->m_id] = 0;
 
-  // if we're not the active screen then send the clipboard now,
-  // otherwise we'll wait until we leave.
-  if (!m_active) {
-    sendClipboard(info->m_id);
-  }
+  // send now rather than on leave, so a wayland server gets it while it's still allowed to offer it locally
+  sendClipboard(info->m_id);
 }
 
 void Client::handleHello()
