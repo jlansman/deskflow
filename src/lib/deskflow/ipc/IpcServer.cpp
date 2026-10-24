@@ -11,8 +11,18 @@
 
 #include <QLocalServer>
 #include <QLocalSocket>
+#include <QSet>
 
 namespace deskflow::core::ipc {
+
+// commands whose latest value should always be replayed to a newly-connecting client,
+// regardless of whether an earlier broadcast of the same command reached (or appeared to
+// reach) some other, possibly stale, client -- see m_lastStickyMessage.
+static const QSet<QString> kStickyCommands = {
+    QStringLiteral("connectionState"),
+    QStringLiteral("connectedClients"),
+    QStringLiteral("secureSocket"),
+};
 
 IpcServer::IpcServer(QObject *parent, const QString &serverName, const QString &typeName)
     : QObject(parent),
@@ -142,6 +152,14 @@ void IpcServer::processMessage(QLocalSocket *clientSocket, const QString &messag
     LOG_DEBUG("%s ipc server sending hello back", m_typeName.constData());
     writeToClientSocket(clientSocket, QStringLiteral("hello=%1").arg(versionId));
 
+    // Resync the new client with the latest known state, in case an earlier broadcast of
+    // it was lost (e.g. written to a client socket that looked connected but wasn't).
+    LOG_VERBOSE("ipc server replaying %d sticky state message(s)", m_lastStickyMessage.size());
+    for (const auto &sticky : std::as_const(m_lastStickyMessage)) {
+      LOG_VERBOSE("%s ipc server replaying sticky state: %s", m_typeName.constData(), sticky.toUtf8().constData());
+      writeToClientSocket(clientSocket, sticky);
+    }
+
     // Replay messages that were queued before any clients connected.
     LOG_VERBOSE("ipc server replaying %d pending messages", m_pendingMessages.size());
     for (const auto &pending : std::as_const(m_pendingMessages)) {
@@ -162,6 +180,10 @@ void IpcServer::processMessage(QLocalSocket *clientSocket, const QString &messag
 void IpcServer::broadcastCommand(const QString &command, const QString &args)
 {
   const auto message = args.isEmpty() ? command : QStringLiteral("%1=%2").arg(command, args);
+
+  if (kStickyCommands.contains(command)) {
+    m_lastStickyMessage[command] = message;
+  }
 
   if (m_clients.isEmpty()) {
     LOG_VERBOSE(

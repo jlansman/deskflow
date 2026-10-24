@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include <QHash>
 #include <QObject>
 #include <QSet>
 
@@ -54,6 +55,13 @@ private:
   QString m_serverName;
   QStringList m_pendingMessages;
   QByteArray m_typeName;
+
+  // latest value of each "sticky" (state-describing) command, kept up to date on every
+  // broadcast regardless of whether it actually reached a live client, and replayed in
+  // full to every newly-connecting client so a client that connects (or reconnects) after
+  // a state change -- including one whose delivery silently failed to a stale socket --
+  // still ends up in sync instead of stuck showing whatever it last knew.
+  QHash<QString, QString> m_lastStickyMessage;
 };
 
 } // namespace deskflow::core::ipc
