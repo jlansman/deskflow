@@ -33,7 +33,7 @@ Config::Config(IEventQueue *events) : m_inputFilter(events), m_events(events)
   // do nothing
 }
 
-bool Config::addScreen(const std::string &name)
+bool Config::addComputer(const std::string &name)
 {
   // alias name must not exist
   if (m_nameToCanonicalName.contains(name)) {
@@ -46,71 +46,74 @@ bool Config::addScreen(const std::string &name)
   // add name
   m_nameToCanonicalName.try_emplace(name, name);
 
-  const auto screen = QString::fromStdString(name);
+  const auto computer = QString::fromStdString(name);
   // add aliases
-  const auto aliases = Settings::value(Settings::Computer::Aliases.arg(screen)).toStringList();
+  const auto aliases = Settings::value(Settings::Computer::Aliases.arg(computer)).toStringList();
   for (const auto &alias : aliases)
     m_nameToCanonicalName.try_emplace(alias.toStdString(), name);
 
   addOption(
-      name, kOptionHalfDuplexCapsLock, Settings::value(Settings::Computer::HalfDuplexCapsLock.arg(screen)).toBool()
+      name, kOptionHalfDuplexCapsLock, Settings::value(Settings::Computer::HalfDuplexCapsLock.arg(computer)).toBool()
   );
   addOption(
-      name, kOptionHalfDuplexNumLock, Settings::value(Settings::Computer::HalfDuplexNumLock.arg(screen)).toBool()
+      name, kOptionHalfDuplexNumLock, Settings::value(Settings::Computer::HalfDuplexNumLock.arg(computer)).toBool()
   );
   addOption(
-      name, kOptionHalfDuplexScrollLock, Settings::value(Settings::Computer::HalfDuplexScrollLock.arg(screen)).toBool()
+      name, kOptionHalfDuplexScrollLock,
+      Settings::value(Settings::Computer::HalfDuplexScrollLock.arg(computer)).toBool()
   );
   addOption(
       name, kOptionXTestXineramaUnaware,
-      Settings::value(Settings::Computer::XtestIsXineramaUnaware.arg(screen)).toBool()
+      Settings::value(Settings::Computer::XtestIsXineramaUnaware.arg(computer)).toBool()
   );
   addOption(
-      name, kOptionScreenSwitchCornerSize, Settings::value(Settings::Computer::SwitchCornerSize.arg(screen)).toInt()
+      name, kOptionComputerSwitchCornerSize, Settings::value(Settings::Computer::SwitchCornerSize.arg(computer)).toInt()
   );
-  addOption(name, kOptionScreenX11WeakFocus, Settings::value(Settings::Computer::WeakX11Focus.arg(screen)).toBool());
+  addOption(
+      name, kOptionComputerX11WeakFocus, Settings::value(Settings::Computer::WeakX11Focus.arg(computer)).toBool()
+  );
 
   OptionValue cornerValue = s_noCornerMask;
-  if (Settings::value(Settings::Computer::SwitchCornerTopLeft.arg(screen)).toBool()) {
+  if (Settings::value(Settings::Computer::SwitchCornerTopLeft.arg(computer)).toBool()) {
     cornerValue = cornerValue | s_topLeftCornerMask;
   }
-  if (Settings::value(Settings::Computer::SwitchCornerTopRight.arg(screen)).toBool()) {
+  if (Settings::value(Settings::Computer::SwitchCornerTopRight.arg(computer)).toBool()) {
     cornerValue = cornerValue | s_topRightCornerMask;
   }
-  if (Settings::value(Settings::Computer::SwitchCornerBottomLeft.arg(screen)).toBool()) {
+  if (Settings::value(Settings::Computer::SwitchCornerBottomLeft.arg(computer)).toBool()) {
     cornerValue = cornerValue | s_bottomLeftCornerMask;
   }
-  if (Settings::value(Settings::Computer::SwitchCornerBottomRight.arg(screen)).toBool()) {
+  if (Settings::value(Settings::Computer::SwitchCornerBottomRight.arg(computer)).toBool()) {
     cornerValue = cornerValue | s_bottomRightCornerMask;
   }
-  addOption(name, kOptionScreenSwitchCorners, cornerValue);
+  addOption(name, kOptionComputerSwitchCorners, cornerValue);
 
-  auto altModifier = Settings::value(Settings::Computer::ModifierAlt.arg(screen)).toString();
+  auto altModifier = Settings::value(Settings::Computer::ModifierAlt.arg(computer)).toString();
   if (altModifier.isEmpty())
     altModifier = kModifierNameAlt;
   addOption(name, kOptionModifierMapForAlt, modifierIDValueFromString(altModifier));
 
-  auto altgrModifier = Settings::value(Settings::Computer::ModifierAltGr.arg(screen)).toString();
+  auto altgrModifier = Settings::value(Settings::Computer::ModifierAltGr.arg(computer)).toString();
   if (altgrModifier.isEmpty())
     altgrModifier = kModifierNameAltGr;
   addOption(name, kOptionModifierMapForAltGr, modifierIDValueFromString(altgrModifier));
 
-  auto ctrlModifier = Settings::value(Settings::Computer::ModifierCtrl.arg(screen)).toString();
+  auto ctrlModifier = Settings::value(Settings::Computer::ModifierCtrl.arg(computer)).toString();
   if (ctrlModifier.isEmpty())
     ctrlModifier = kModifierNameCtrl;
   addOption(name, kOptionModifierMapForControl, modifierIDValueFromString(ctrlModifier));
 
-  auto metaModifier = Settings::value(Settings::Computer::ModifierMeta.arg(screen)).toString();
+  auto metaModifier = Settings::value(Settings::Computer::ModifierMeta.arg(computer)).toString();
   if (metaModifier.isEmpty())
     metaModifier = kModifierNameMeta;
   addOption(name, kOptionModifierMapForMeta, modifierIDValueFromString(metaModifier));
 
-  auto shiftModifier = Settings::value(Settings::Computer::ModifierShift.arg(screen)).toString();
+  auto shiftModifier = Settings::value(Settings::Computer::ModifierShift.arg(computer)).toString();
   if (shiftModifier.isEmpty())
     shiftModifier = kModifierNameShift;
   addOption(name, kOptionModifierMapForShift, modifierIDValueFromString(shiftModifier));
 
-  auto superModifier = Settings::value(Settings::Computer::ModifierSuper.arg(screen)).toString();
+  auto superModifier = Settings::value(Settings::Computer::ModifierSuper.arg(computer)).toString();
   if (superModifier.isEmpty())
     superModifier = kModifierNameSuper;
   addOption(name, kOptionModifierMapForSuper, modifierIDValueFromString(superModifier));
@@ -213,7 +216,7 @@ bool Config::addOption(const std::string &name, OptionID option, OptionValue val
   return true;
 }
 
-bool Config::isValidScreenName(const std::string &name) const
+bool Config::isValidComputerName(const std::string &name) const
 {
   // name is valid if matches validname
   //  name      ::= [_A-Za-z0-9] | [_A-Za-z0-9][-_A-Za-z0-9]*[_A-Za-z0-9]
@@ -283,7 +286,7 @@ Config::all_const_iterator Config::endAll() const
   return m_nameToCanonicalName.end();
 }
 
-bool Config::isScreen(const std::string &name) const
+bool Config::isComputer(const std::string &name) const
 {
   return m_nameToCanonicalName.contains(name);
 }
@@ -384,9 +387,9 @@ const Config::ScreenOptions *Config::getOptions(const std::string &name) const
   return options;
 }
 
-bool Config::hasLockToScreenAction() const
+bool Config::hasLockToComputerAction() const
 {
-  return m_hasLockToScreenAction;
+  return m_hasLockToComputerAction;
 }
 
 bool Config::operator==(const Config &x) const
@@ -442,19 +445,19 @@ bool Config::operator==(const Config &x) const
 void Config::read(ConfigReadContext &context)
 {
   Config tmp(m_events);
-  const auto screens = Settings::knownComputers();
-  for (const auto &screen : screens) {
-    if (screen.isEmpty())
+  const auto computers = Settings::knownComputers();
+  for (const auto &computer : computers) {
+    if (computer.isEmpty())
       continue;
-    const auto screenName = screen.toStdString();
+    const auto computerName = computer.toStdString();
 
-    if (!isValidScreenName(screenName)) {
-      throw ServerConfigReadException(context, "invalid screen name \"%{1}\"", screenName);
+    if (!isValidComputerName(computerName)) {
+      throw ServerConfigReadException(context, "invalid computer name \"%{1}\"", computerName);
     }
 
-    // add the screen to the configuration
-    if (!tmp.addScreen(screenName)) {
-      throw ServerConfigReadException(context, "duplicate screen name \"%{1}\"", screenName);
+    // add the computer to the configuration
+    if (!tmp.addComputer(computerName)) {
+      throw ServerConfigReadException(context, "duplicate computer name \"%{1}\"", computerName);
     }
   }
   while (context.getStream()) {
@@ -536,17 +539,17 @@ void Config::readSectionOptions(ConfigReadContext &s)
   }
 
   if (Settings::value(Settings::Server::EnableSwitchDelay).toBool()) {
-    addOption("", kOptionScreenSwitchDelay, Settings::value(Settings::Server::SwitchDelay).toInt());
+    addOption("", kOptionComputerSwitchDelay, Settings::value(Settings::Server::SwitchDelay).toInt());
   }
 
   if (Settings::value(Settings::Server::EnableSwitchDoubleTap).toBool()) {
-    addOption("", kOptionScreenSwitchTwoTap, Settings::value(Settings::Server::SwitchDoubleTap).toInt());
+    addOption("", kOptionComputerSwitchTwoTap, Settings::value(Settings::Server::SwitchDoubleTap).toInt());
   }
 
   addOption(
-      "", kOptionDefaultLockToScreenState, Settings::value(Settings::Server::DefaultLockToComputerState).toBool()
+      "", kOptionDefaultLockToComputerState, Settings::value(Settings::Server::DefaultLockToComputerState).toBool()
   );
-  addOption("", kOptionDisableLockToScreen, Settings::value(Settings::Server::DisableLockToComputer).toBool());
+  addOption("", kOptionDisableLockToComputer, Settings::value(Settings::Server::DisableLockToComputer).toBool());
   addOption("", kOptionRelativeMouseMoves, Settings::value(Settings::Server::RelativeMouseMoves).toBool());
   addOption("", kOptionWin32KeepForeground, Settings::value(Settings::Server::Win32KeepForeground).toBool());
   addOption("", kOptionClipboardSharing, Settings::value(Settings::Server::EnableClipboard).toBool());
@@ -643,27 +646,27 @@ void Config::readSectionScreens(ConfigReadContext &s)
 void Config::readSectionLinks(ConfigReadContext &s)
 {
   std::string line;
-  std::string screen;
+  std::string computer;
   while (s.readLine(line)) {
     // check for end of section
     if (line == "end") {
       return;
     }
 
-    // see if it's the next screen
+    // see if it's the next computer
     if (line[line.size() - 1] == ':') {
       // strip :
-      screen = line.substr(0, line.size() - 1);
+      computer = line.substr(0, line.size() - 1);
 
-      // verify we know about the screen
-      if (!isScreen(screen)) {
-        throw ServerConfigReadException(s, "unknown screen name \"%{1}\"", screen);
+      // verify we know about the computer
+      if (!isComputer(computer)) {
+        throw ServerConfigReadException(s, "unknown computer name \"%{1}\"", computer);
       }
-      if (!isCanonicalName(screen)) {
-        throw ServerConfigReadException(s, "cannot use screen name alias here");
+      if (!isCanonicalName(computer)) {
+        throw ServerConfigReadException(s, "cannot use computer name alias here");
       }
-    } else if (screen.empty()) {
-      throw ServerConfigReadException(s, "argument before first screen");
+    } else if (computer.empty()) {
+      throw ServerConfigReadException(s, "argument before first computer");
     } else {
       // parse argument:  `<name>[(<s0>,<e0>)]=<value>[(<s1>,<e1>)]'
       // the stuff in brackets is optional.  interval values must be
@@ -671,14 +674,14 @@ void Config::readSectionLinks(ConfigReadContext &s)
       // interval is taken to be (0,100).
       std::string::size_type i = 0;
       std::string side;
-      std::string dstScreen;
+      std::string dstComputer;
       std::string srcArgString;
       std::string dstArgString;
       ConfigReadContext::ArgList srcArgs;
       ConfigReadContext::ArgList dstArgs;
       s.parseNameWithArgs("link", line, "=", i, side, srcArgs);
       ++i;
-      s.parseNameWithArgs("screen", line, "", i, dstScreen, dstArgs);
+      s.parseNameWithArgs("computer", line, "", i, dstComputer, dstArgs);
       Interval srcInterval(s.parseInterval(srcArgs));
       Interval dstInterval(s.parseInterval(dstArgs));
 
@@ -697,11 +700,11 @@ void Config::readSectionLinks(ConfigReadContext &s)
         // unknown argument
         throw ServerConfigReadException(s, "unknown side \"%{1}\" in link", side);
       }
-      if (!isScreen(dstScreen)) {
-        throw ServerConfigReadException(s, "unknown screen name \"%{1}\"", dstScreen);
+      if (!isComputer(dstComputer)) {
+        throw ServerConfigReadException(s, "unknown computer name \"%{1}\"", dstComputer);
       }
       if (!connect(
-              screen, dir, srcInterval.first, srcInterval.second, dstScreen, dstInterval.first, dstInterval.second
+              computer, dir, srcInterval.first, srcInterval.second, dstComputer, dstInterval.first, dstInterval.second
           )) {
         throw ServerConfigReadException(s, "overlapping range");
       }
@@ -732,7 +735,7 @@ Config::parseCondition(const ConfigReadContext &s, const std::string &name, cons
       throw ServerConfigReadException(s, "syntax for condition: keystroke(modifiers+key)");
     }
 
-    IPlatformScreen::KeyInfo *keyInfo = s.parseKeystroke(args[0]);
+    IPlatformComputer::KeyInfo *keyInfo = s.parseKeystroke(args[0]);
 
     return new InputFilter::KeystrokeCondition(m_events, keyInfo);
   }
@@ -749,17 +752,17 @@ Config::parseCondition(const ConfigReadContext &s, const std::string &name, cons
 
   if (name == "connect") {
     if (args.size() != 1) {
-      throw ServerConfigReadException(s, "syntax for condition: connect([screen])");
+      throw ServerConfigReadException(s, "syntax for condition: connect([computer])");
     }
 
-    std::string screen = args[0];
-    if (isScreen(screen)) {
-      screen = getCanonicalName(screen);
-    } else if (!screen.empty()) {
-      throw ServerConfigReadException(s, "unknown screen name \"%{1}\" in connect", screen);
+    std::string computer = args[0];
+    if (isComputer(computer)) {
+      computer = getCanonicalName(computer);
+    } else if (!computer.empty()) {
+      throw ServerConfigReadException(s, "unknown computer name \"%{1}\" in connect", computer);
     }
 
-    return new InputFilter::ScreenConnectedCondition(m_events, screen);
+    return new InputFilter::ComputerConnectedCondition(m_events, computer);
   }
 
   throw ServerConfigReadException(s, "unknown argument \"%{1}\"", name);
@@ -774,20 +777,20 @@ void Config::parseAction(
 
   if (name == "keystroke" || name == "keyDown" || name == "keyUp") {
     if (args.size() < 1 || args.size() > 2) {
-      throw ServerConfigReadException(s, "syntax for action: keystroke(modifiers+key[,screens])");
+      throw ServerConfigReadException(s, "syntax for action: keystroke(modifiers+key[,computers])");
     }
 
-    IPlatformScreen::KeyInfo *keyInfo;
+    IPlatformComputer::KeyInfo *keyInfo;
     if (args.size() == 1) {
       keyInfo = s.parseKeystroke(args[0]);
     } else {
-      std::set<std::string> screens;
-      parseScreens(s, args[1], screens);
-      keyInfo = s.parseKeystroke(args[0], screens);
+      std::set<std::string> computers;
+      parseComputers(s, args[1], computers);
+      keyInfo = s.parseKeystroke(args[0], computers);
     }
 
     if (name == "keystroke") {
-      IPlatformScreen::KeyInfo *keyInfo2 = IKeyState::KeyInfo::alloc(*keyInfo);
+      IPlatformComputer::KeyInfo *keyInfo2 = IKeyState::KeyInfo::alloc(*keyInfo);
       action = new InputFilter::KeystrokeAction(m_events, keyInfo2, true);
       rule.adoptAction(action, true);
       action = new InputFilter::KeystrokeAction(m_events, keyInfo, false);
@@ -836,14 +839,14 @@ void Config::parseAction(
       throw ServerConfigReadException(s, "syntax for action: switchToScreen(name)");
     }
 
-    std::string screen = args[0];
-    if (isScreen(screen)) {
-      screen = getCanonicalName(screen);
-    } else if (!screen.empty()) {
-      throw ServerConfigReadException(s, "unknown screen name in switchToScreen");
+    std::string computer = args[0];
+    if (isComputer(computer)) {
+      computer = getCanonicalName(computer);
+    } else if (!computer.empty()) {
+      throw ServerConfigReadException(s, "unknown computer name in switchToScreen");
     }
 
-    action = new InputFilter::SwitchToScreenAction(m_events, screen);
+    action = new InputFilter::SwitchToComputerAction(m_events, computer);
   }
 
   else if (name == "switchInDirection") {
@@ -873,7 +876,7 @@ void Config::parseAction(
       throw ServerConfigReadException(s, "syntax for action: switchToNextScreen");
     }
 
-    action = new InputFilter::SwitchToNextScreenAction(m_events);
+    action = new InputFilter::SwitchToNextComputerAction(m_events);
   }
 
   else if (name == "lockCursorToScreen") {
@@ -881,24 +884,24 @@ void Config::parseAction(
       throw ServerConfigReadException(s, "syntax for action: lockCursorToScreen([{off|on|toggle}])");
     }
 
-    InputFilter::LockCursorToScreenAction::Mode mode = InputFilter::LockCursorToScreenAction::kToggle;
+    InputFilter::LockCursorToComputerAction::Mode mode = InputFilter::LockCursorToComputerAction::kToggle;
     if (args.size() == 1) {
       if (args[0] == "off") {
-        mode = InputFilter::LockCursorToScreenAction::kOff;
+        mode = InputFilter::LockCursorToComputerAction::kOff;
       } else if (args[0] == "on") {
-        mode = InputFilter::LockCursorToScreenAction::kOn;
+        mode = InputFilter::LockCursorToComputerAction::kOn;
       } else if (args[0] == "toggle") {
-        mode = InputFilter::LockCursorToScreenAction::kToggle;
+        mode = InputFilter::LockCursorToComputerAction::kToggle;
       } else {
         throw ServerConfigReadException(s, "syntax for action: lockCursorToScreen([{off|on|toggle}])");
       }
     }
 
-    if (mode != InputFilter::LockCursorToScreenAction::kOff) {
-      m_hasLockToScreenAction = true;
+    if (mode != InputFilter::LockCursorToComputerAction::kOff) {
+      m_hasLockToComputerAction = true;
     }
 
-    action = new InputFilter::LockCursorToScreenAction(m_events, mode);
+    action = new InputFilter::LockCursorToComputerAction(m_events, mode);
   }
 
   else if (name == "restartServer") {
@@ -921,7 +924,7 @@ void Config::parseAction(
 
   else if (name == "keyboardBroadcast") {
     if (args.size() > 2) {
-      throw ServerConfigReadException(s, "syntax for action: keyboardBroadcast([{off|on|toggle}[,screens]])");
+      throw ServerConfigReadException(s, "syntax for action: keyboardBroadcast([{off|on|toggle}[,computers]])");
     }
 
     InputFilter::KeyboardBroadcastAction::Mode mode = InputFilter::KeyboardBroadcastAction::kToggle;
@@ -935,17 +938,17 @@ void Config::parseAction(
       } else {
         throw ServerConfigReadException(
             s, "syntax for action: "
-               "keyboardBroadcast([{off|on|toggle}[,screens]])"
+               "keyboardBroadcast([{off|on|toggle}[,computers]])"
         );
       }
     }
 
-    std::set<std::string> screens;
+    std::set<std::string> computers;
     if (args.size() >= 2) {
-      parseScreens(s, args[1], screens);
+      parseComputers(s, args[1], computers);
     }
 
-    action = new InputFilter::KeyboardBroadcastAction(m_events, mode, screens);
+    action = new InputFilter::KeyboardBroadcastAction(m_events, mode, computers);
   }
 
   else {
@@ -955,13 +958,15 @@ void Config::parseAction(
   rule.adoptAction(action, activate);
 }
 
-void Config::parseScreens(const ConfigReadContext &c, const std::string_view &s, std::set<std::string> &screens) const
+void Config::parseComputers(
+    const ConfigReadContext &c, const std::string_view &s, std::set<std::string> &computers
+) const
 {
-  screens.clear();
+  computers.clear();
 
   std::string::size_type i = 0;
   while (i < s.size()) {
-    // find end of next screen name
+    // find end of next computer name
     std::string::size_type j = s.find(':', i);
     if (j == std::string::npos) {
       j = s.size();
@@ -976,13 +981,13 @@ void Config::parseScreens(const ConfigReadContext &c, const std::string_view &s,
 
     // add name
     if (rawName == "*") {
-      screens.insert("*");
+      computers.insert("*");
     } else if (!rawName.empty()) {
       std::string name = getCanonicalName(rawName);
       if (name.empty()) {
-        throw ServerConfigReadException(c, "unknown screen name \"%{1}\"", rawName);
+        throw ServerConfigReadException(c, "unknown computer name \"%{1}\"", rawName);
       }
-      screens.insert(name);
+      computers.insert(name);
     }
 
     // next
@@ -1252,10 +1257,10 @@ std::ostream &operator<<(std::ostream &s, const Config &config)
   // links section
   std::string neighbor;
   s << "section: links" << std::endl;
-  for (const auto &screen : config) {
-    s << "\t" << screen.c_str() << ":" << std::endl;
+  for (const auto &computer : config) {
+    s << "\t" << computer.c_str() << ":" << std::endl;
 
-    for (Config::link_const_iterator link = config.beginNeighbor(screen), nend = config.endNeighbor(screen);
+    for (Config::link_const_iterator link = config.beginNeighbor(computer), nend = config.endNeighbor(computer);
          link != nend; ++link) {
       s << "\t\t" << Config::dirName(link->first.getSide()) << Config::formatInterval(link->first.getInterval())
         << " = " << link->second.getName().c_str() << Config::formatInterval(link->second.getInterval()) << std::endl;
@@ -1465,13 +1470,13 @@ void ConfigReadContext::parseNameWithArgs(
   return;
 }
 
-IPlatformScreen::KeyInfo *ConfigReadContext::parseKeystroke(const std::string &keystroke) const
+IPlatformComputer::KeyInfo *ConfigReadContext::parseKeystroke(const std::string &keystroke) const
 {
   return parseKeystroke(keystroke, std::set<std::string>());
 }
 
-IPlatformScreen::KeyInfo *
-ConfigReadContext::parseKeystroke(const std::string &keystroke, const std::set<std::string> &screens) const
+IPlatformComputer::KeyInfo *
+ConfigReadContext::parseKeystroke(const std::string &keystroke, const std::set<std::string> &computers) const
 {
   std::string s = keystroke;
 
@@ -1489,10 +1494,10 @@ ConfigReadContext::parseKeystroke(const std::string &keystroke, const std::set<s
     throw ServerConfigReadException(*this, "missing key and/or modifiers in keystroke");
   }
 
-  return IPlatformScreen::KeyInfo::alloc(key, mask, 0, 0, screens);
+  return IPlatformComputer::KeyInfo::alloc(key, mask, 0, 0, computers);
 }
 
-IPlatformScreen::ButtonInfo ConfigReadContext::parseMouse(const std::string &mouse) const
+IPlatformComputer::ButtonInfo ConfigReadContext::parseMouse(const std::string &mouse) const
 {
   std::string s = mouse;
 
@@ -1510,7 +1515,7 @@ IPlatformScreen::ButtonInfo ConfigReadContext::parseMouse(const std::string &mou
     throw ServerConfigReadException(*this, "invalid button");
   }
 
-  return IPlatformScreen::ButtonInfo{button, mask};
+  return IPlatformComputer::ButtonInfo{button, mask};
 }
 
 KeyModifierMask ConfigReadContext::parseModifier(const std::string &modifiers) const
