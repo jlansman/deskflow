@@ -1392,6 +1392,43 @@ Enabling this setting will disable the server config GUI.</source>
     </message>
 </context>
 <context>
+    <name>UpdateInstaller</name>
+    <message>
+        <source>Update Deskflow</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Install Jeff Mod %1?
+
+Deskflow will close and restart. Windows will ask for permission to continue.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Downloading update...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Download failed: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not save the download to %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not write %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The update was not started (permission was not granted).</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>i18n</name>
     <message>
         <source>LocalizedName</source>
