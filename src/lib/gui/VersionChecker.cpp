@@ -46,12 +46,18 @@ void VersionChecker::replyFinished(QNetworkReply *reply)
 
   qDebug("version check server success, http status: %d", httpStatus);
 
-  const auto newestVersion = QString(reply->readAll());
+  const auto newestVersion = QString(reply->readAll()).trimmed();
   reply->deleteLater();
   qDebug("version check response: %s", qPrintable(newestVersion));
 
   if (newestVersion.isEmpty()) {
     qWarning() << "version check is response is empty";
+    return;
+  }
+
+  static const QRegularExpression versionFormat(R"(^\d+\.\d+\.\d+(\.\d+)?(-\w+)?$)");
+  if (!versionFormat.match(newestVersion).hasMatch()) {
+    qWarning("version check response is not a version, ignoring: %s", qPrintable(newestVersion));
     return;
   }
 
@@ -114,16 +120,21 @@ int VersionChecker::compareVersions(const QString &left, const QString &right)
   const int leftMinor = leftNumberParts.at(1).toInt();
   const int leftPatch = leftNumberParts.at(2).toInt();
   const int leftStage = getStageVersion(leftStagePart);
+  // optional fourth number: the build number of a custom build (e.g. 1.27.0.30)
+  const int leftBuild = leftNumberParts.size() > 3 ? leftNumberParts.at(3).toInt() : 0;
 
   const int rightMajor = rightNumberParts.at(0).toInt();
   const int rightMinor = rightNumberParts.at(1).toInt();
   const int rightPatch = rightNumberParts.at(2).toInt();
   const int rightStage = getStageVersion(rightStagePart);
+  const int rightBuild = rightNumberParts.size() > 3 ? rightNumberParts.at(3).toInt() : 0;
 
   const bool rightWins =
       (rightMajor > leftMajor) || ((rightMajor >= leftMajor) && (rightMinor > leftMinor)) ||
       ((rightMajor >= leftMajor) && (rightMinor >= leftMinor) && (rightPatch > leftPatch)) ||
-      ((rightMajor >= leftMajor) && (rightMinor >= leftMinor) && (rightPatch >= leftPatch) && (rightStage > leftStage));
+      ((rightMajor >= leftMajor) && (rightMinor >= leftMinor) && (rightPatch >= leftPatch) && (rightStage > leftStage)) ||
+      ((rightMajor >= leftMajor) && (rightMinor >= leftMinor) && (rightPatch >= leftPatch) &&
+       (rightStage >= leftStage) && (rightBuild > leftBuild));
 
   return rightWins ? 1 : -1;
 }

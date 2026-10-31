@@ -18,7 +18,11 @@ const auto kUrlApp = QStringLiteral("https://%1").arg(kOrgDomain);
 const auto kUrlHelp = QStringLiteral("%1/help?%2").arg(kUrlApp, kUrlSourceQuery);
 const auto kUrlDownload = QStringLiteral("%1/download?%2").arg(kUrlApp, kUrlSourceQuery);
 const auto kUrlWiki = QStringLiteral("%1/wiki?%2").arg(kUrlApp, kUrlSourceQuery);
-const auto kUrlUpdateCheck = QStringLiteral("https://api.%1/version").arg(kOrgDomain);
+// Jeff Mod: update notices come from the fork instead of deskflow.org. The check expects a plain version
+// string (e.g. 1.27.0.30); bump jeff-mod-version.txt on custom/main to make installed copies show "Update available".
+const auto kUrlForkRepo = QStringLiteral("https://github.com/jlansman/deskflow/tree/custom/main");
+const auto kUrlUpdateCheck =
+    QStringLiteral("https://raw.githubusercontent.com/jlansman/deskflow/custom/main/jeff-mod-version.txt");
 
 #if defined(Q_OS_LINUX)
 const auto kUrlGnomeTrayFix = QStringLiteral("https://extensions.gnome.org/extension/615/appindicator-support/");

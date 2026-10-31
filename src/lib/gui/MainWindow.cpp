@@ -463,7 +463,7 @@ void MainWindow::openAboutDialog()
 
 void MainWindow::openGetNewVersionUrl() const
 {
-  QDesktopServices::openUrl(QUrl(kUrlDownload));
+  QDesktopServices::openUrl(QUrl(kUrlForkRepo));
 }
 
 void MainWindow::openSettings()
@@ -698,9 +698,9 @@ void MainWindow::setupTrayIcon()
 void MainWindow::applyConfig()
 {
   if (Settings::value(Settings::Gui::ShowVersionInTitle).toBool()) {
-    setWindowTitle(QStringLiteral("%1 - %2").arg(kAppName, kDisplayVersion));
+    setWindowTitle(QStringLiteral("%1 - Jeff Mod %2").arg(kAppName, kDisplayVersion));
   } else {
-    setWindowTitle(kAppName);
+    setWindowTitle(QStringLiteral("%1 - Jeff Mod").arg(kAppName));
   }
 
   if (const auto host = Settings::value(Settings::Client::RemoteHost).toString(); !host.isEmpty())
