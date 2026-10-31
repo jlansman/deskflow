@@ -62,6 +62,10 @@ public:
 
   void setMode(EHookMode mode);
 
+  //! Tell the hook that Deskflow itself is about to warp the cursor to x,y so the
+  //! resulting injected mouse move is processed instead of being ignored.
+  static void expectWarp(int32_t x, int32_t y);
+
   //! Copy the hook's physical key state; false until it has observed an event.
   static bool getPhysicalKeyState(BYTE keys[256]);
 

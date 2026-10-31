@@ -10,6 +10,7 @@
 #include "base/Log.h"
 #include "deskflow/DisplayException.h"
 
+#include <atomic>
 #include <cstring>
 #include <mutex>
 
@@ -42,6 +43,30 @@ static std::mutex g_keyStateMutex;
 static DWORD g_hookThread = 0;
 static bool g_fakeServerInput = false;
 static BOOL g_isPrimary = TRUE;
+
+// cursor warps requested by Deskflow itself. SetCursorPos() reaches the low level hook as injected
+// input, but the position tracking depends on seeing it, so it must not be ignored as third party input.
+static std::atomic<int64_t> g_expectedWarp{-1}; // packed (x << 32) | (y & 0xffffffff), -1 when none
+static std::atomic<DWORD> g_expectedWarpTick{0};
+static constexpr DWORD kExpectedWarpTimeoutMs = 250;
+
+static int64_t packPoint(int32_t x, int32_t y)
+{
+  return (static_cast<int64_t>(x) << 32) | static_cast<uint32_t>(y);
+}
+
+static bool consumeExpectedWarp(int32_t x, int32_t y)
+{
+  const auto expected = packPoint(x, y);
+  if (g_expectedWarp.load() != expected) {
+    return false;
+  }
+  if (GetTickCount() - g_expectedWarpTick.load() > kExpectedWarpTimeoutMs) {
+    return false;
+  }
+  g_expectedWarp.store(-1);
+  return true;
+}
 
 MSWindowsHook::~MSWindowsHook()
 {
@@ -127,6 +152,12 @@ void MSWindowsHook::setSides(uint32_t sides)
 uint32_t MSWindowsHook::getSides()
 {
   return g_zoneSides;
+}
+
+void MSWindowsHook::expectWarp(int32_t x, int32_t y)
+{
+  g_expectedWarpTick.store(GetTickCount());
+  g_expectedWarp.store(packPoint(x, y));
 }
 
 void MSWindowsHook::setZone(int32_t x, int32_t y, int32_t w, int32_t h, int32_t jumpZoneSize)
@@ -601,7 +632,7 @@ static LRESULT CALLBACK mouseLLHook(int code, WPARAM wParam, LPARAM lParam)
 
     // Injected input is input that is not generated from deskflow but another remote control tool
     bool const injected = info->flags & LLMHF_INJECTED;
-    if (injected && !g_fakeServerInput) {
+    if (injected && !g_fakeServerInput && !consumeExpectedWarp(info->pt.x, info->pt.y)) {
       return CallNextHookEx(g_mouseLL, code, wParam, lParam);
     }
 

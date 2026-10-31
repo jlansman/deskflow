@@ -467,6 +467,7 @@ bool MSWindowsComputer::getThisCursorPos(LPPOINT pos)
 
 bool MSWindowsComputer::setThisCursorPos(int x, int y)
 {
+  MSWindowsHook::expectWarp(x, y);
   auto result = SetCursorPos(x, y);
   if (!result) {
     LOG_DEBUG("could not set cursor pos, error: %s", windowsErrorToString(GetLastError()).c_str());
