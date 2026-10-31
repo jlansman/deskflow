@@ -50,7 +50,11 @@ try {
   Copy-Item $InstallDir $backup -Recurse
   Copy-Item (Join-Path $stage '*') $InstallDir -Recurse -Force
 
-  Start-Service Deskflow
+  # a virus scanner can briefly deny the first start of freshly written files, so retry
+  for ($i = 0; $i -lt 6; $i++) {
+    try { Start-Service Deskflow -ErrorAction Stop; break }
+    catch { if ($i -eq 5) { throw }; Start-Sleep -Seconds 3 }
+  }
   # explorer starts the app un-elevated, like a normal launch
   Start-Process explorer.exe -ArgumentList ('"' + (Join-Path $InstallDir 'deskflow.exe') + '"')
 }
