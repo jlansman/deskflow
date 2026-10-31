@@ -32,6 +32,7 @@ class QLocalServer;
 class DeskflowApplication;
 class LogDock;
 class StatusBar;
+class UpdateInstaller;
 
 namespace Ui {
 class MainWindow;
@@ -96,7 +97,7 @@ private:
 
   void clearSettings();
   void openAboutDialog();
-  void openGetNewVersionUrl() const;
+  void openGetNewVersionUrl();
   void openSettings();
   void startCore();
   void stopCore();
@@ -167,6 +168,8 @@ private:
   inline static const auto m_nameRegEx = QRegularExpression(QStringLiteral("^[\\w\\-_\\.]{0,255}$"));
 
   VersionChecker m_versionChecker;
+  QString m_availableVersion;
+  UpdateInstaller *m_updateInstaller = nullptr;
   bool m_secureSocket = false;
   bool m_saveOnExit = true;
   bool m_clientErrorVisible = false;

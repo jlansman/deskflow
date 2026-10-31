@@ -27,6 +27,8 @@ void VersionChecker::checkLatest() const
   const QString url = Settings::value(Settings::Gui::UpdateCheckUrl).toString();
   qDebug("checking for updates at: %s", qPrintable(url));
   auto request = QNetworkRequest(url);
+  // release assets are served through a redirect
+  request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
   auto userAgent = QString("%1 %2 on %3").arg(kAppName, kVersion, QSysInfo::prettyProductName());
   request.setHeader(QNetworkRequest::UserAgentHeader, userAgent);
   request.setRawHeader("X-Deskflow-Version", kVersion);

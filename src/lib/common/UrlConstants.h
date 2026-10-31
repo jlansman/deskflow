@@ -18,11 +18,13 @@ const auto kUrlApp = QStringLiteral("https://%1").arg(kOrgDomain);
 const auto kUrlHelp = QStringLiteral("%1/help?%2").arg(kUrlApp, kUrlSourceQuery);
 const auto kUrlDownload = QStringLiteral("%1/download?%2").arg(kUrlApp, kUrlSourceQuery);
 const auto kUrlWiki = QStringLiteral("%1/wiki?%2").arg(kUrlApp, kUrlSourceQuery);
-// Jeff Mod: update notices come from the fork instead of deskflow.org. The check expects a plain version
-// string (e.g. 1.27.0.30); bump jeff-mod-version.txt on custom/main to make installed copies show "Update available".
+// Jeff Mod: updates come from the fork instead of deskflow.org. The jeff-mod-release workflow publishes the
+// rolling "jeff-mod" release: version.txt holds a plain version string (e.g. 1.27.0.30) and the zip holds the
+// Windows build that the in-app updater installs.
 const auto kUrlForkRepo = QStringLiteral("https://github.com/jlansman/deskflow/tree/custom/main");
-const auto kUrlUpdateCheck =
-    QStringLiteral("https://raw.githubusercontent.com/jlansman/deskflow/custom/main/jeff-mod-version.txt");
+const auto kUrlForkRelease = QStringLiteral("https://github.com/jlansman/deskflow/releases/download/jeff-mod");
+const auto kUrlUpdateCheck = QStringLiteral("%1/version.txt").arg(kUrlForkRelease);
+const auto kUrlUpdatePackage = QStringLiteral("%1/deskflow-jeffmod-win64.zip").arg(kUrlForkRelease);
 
 #if defined(Q_OS_LINUX)
 const auto kUrlGnomeTrayFix = QStringLiteral("https://extensions.gnome.org/extension/615/appindicator-support/");

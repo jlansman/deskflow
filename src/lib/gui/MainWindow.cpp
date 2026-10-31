@@ -26,6 +26,7 @@
 #include "common/VersionInfo.h"
 #include "gui/Messages.h"
 #include "gui/TlsUtility.h"
+#include "gui/UpdateInstaller.h"
 #include "gui/core/CoreProcess.h"
 #include "gui/ipc/DaemonIpcClient.h"
 #include "gui/widgets/LogDock.h"
@@ -303,6 +304,9 @@ void MainWindow::connectSlots()
   connect(m_statusBar, &StatusBar::requestShowMyFingerprints, this, &MainWindow::showMyFingerprint);
   connect(m_statusBar, &StatusBar::requestUpdateVersion, this, &MainWindow::openGetNewVersionUrl);
   connect(&m_versionChecker, &VersionChecker::updateFound, m_statusBar, &StatusBar::updateFound);
+  connect(&m_versionChecker, &VersionChecker::updateFound, this, [this](const QString &version) {
+    m_availableVersion = version;
+  });
 
   connect(m_guiDupeChecker, &QLocalServer::newConnection, this, &MainWindow::showAndActivate);
 
@@ -461,9 +465,11 @@ void MainWindow::openAboutDialog()
   about.exec();
 }
 
-void MainWindow::openGetNewVersionUrl() const
+void MainWindow::openGetNewVersionUrl()
 {
-  QDesktopServices::openUrl(QUrl(kUrlForkRepo));
+  if (m_updateInstaller == nullptr)
+    m_updateInstaller = new UpdateInstaller(this);
+  m_updateInstaller->start(m_availableVersion);
 }
 
 void MainWindow::openSettings()

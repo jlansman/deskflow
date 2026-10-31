@@ -31,6 +31,8 @@ add_library(${target} STATIC
   StyleUtils.h
   TlsUtility.cpp
   TlsUtility.h
+  UpdateInstaller.cpp
+  UpdateInstaller.h
   VersionChecker.cpp
   VersionChecker.h
   config/ComputerConfig.h
@@ -124,3 +126,7 @@ target_link_libraries(${target}
     net
     Qt6::Widgets
 )
+
+if(WIN32)
+  target_link_libraries(${target} PRIVATE shell32)
+endif()

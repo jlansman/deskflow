@@ -1,0 +1,66 @@
+# Jeff Mod: build the Windows x64 binaries on every push to custom/main and publish them as the rolling
+# "jeff-mod" release. The in-app updater reads version.txt and downloads the zip from that release.
+
+name: Jeff Mod Release
+
+on:
+  push:
+    branches: [custom/main]
+  workflow_dispatch:
+
+concurrency:
+  group: jeff-mod-release
+  cancel-in-progress: true
+
+jobs:
+  windows-x64:
+    runs-on: windows-2022
+    timeout-minutes: 60
+    permissions:
+      contents: write
+    steps:
+      # gets all the tags so git describe produces the same version the app reports
+      - name: Fancy Checkout
+        uses: sithlord48/fancy-checkout@v2
+
+      - name: Setup VC++ environment
+        uses: TheMrMilchmann/setup-msvc-dev@v4
+        with:
+          arch: amd64
+          spectre: true
+
+      - name: Install dependencies
+        id: get-deps
+        uses: ./.github/actions/install-dependencies
+        with:
+          qt-version: 6.12
+          vcpkg-triplet: x64-windows-release
+
+      - name: Get version
+        uses: ./.github/actions/get-version
+
+      - name: Configure
+        run: cmake -Bbuild -G Ninja -DCMAKE_BUILD_TYPE=Release -DSKIP_BUILD_TESTS=ON ${{ steps.get-deps.outputs.vcpkg-cmake-config }} -DPACKAGE_VERSION_LABEL="${{ env.DESKFLOW_PACKAGE_VERSION }}"
+
+      - name: Build
+        run: cmake --build build --config Release -j8
+
+      - name: Package
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force dist | Out-Null
+          Compress-Archive -Path build/bin/* -DestinationPath dist/deskflow-jeffmod-win64.zip
+          Set-Content -Path dist/version.txt -Value $env:DESKFLOW_VERSION -NoNewline -Encoding ascii
+          Get-Content dist/version.txt
+          Get-ChildItem dist | Format-Table Name, Length
+
+      - name: Publish rolling release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete jeff-mod --yes --cleanup-tag || true
+          gh release create jeff-mod dist/deskflow-jeffmod-win64.zip dist/version.txt \
+            --target "$GITHUB_SHA" \
+            --title "Jeff Mod ${DESKFLOW_VERSION}" \
+            --notes "Rolling build of custom/main (${GITHUB_SHA::8}), version ${DESKFLOW_VERSION}. Installed by the in-app updater."
