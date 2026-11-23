@@ -104,8 +104,9 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release delete jeff-mod --yes --cleanup-tag || true
-          gh release create jeff-mod dist/deskflow-jeffmod-win64.zip dist/version.txt \
+          # the upstream remote added above would otherwise make gh target deskflow/deskflow
+          gh release delete jeff-mod --repo "$GITHUB_REPOSITORY" --yes --cleanup-tag || true
+          gh release create jeff-mod --repo "$GITHUB_REPOSITORY" dist/deskflow-jeffmod-win64.zip dist/version.txt \
             --target "$(git rev-parse HEAD)" \
             --title "Jeff Mod ${DESKFLOW_VERSION}" \
             --notes "Rolling build of custom/main ($(git rev-parse --short=8 HEAD)) after merging the real Deskflow main branch, version ${DESKFLOW_VERSION}. Installed by the in-app updater."
