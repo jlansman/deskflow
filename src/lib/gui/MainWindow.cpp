@@ -308,6 +308,16 @@ void MainWindow::connectSlots()
   connect(m_statusBar, &StatusBar::requestShowUpstream, this, []() {
     QDesktopServices::openUrl(QUrl(kUrlUpstreamSyncPage));
   });
+  // the app can stay open for weeks, so look again once a day
+  m_updateCheckTimer = new QTimer(this);
+  m_updateCheckTimer->setInterval(std::chrono::hours(24));
+  connect(m_updateCheckTimer, &QTimer::timeout, this, [this]() {
+    if (Settings::value(Settings::Gui::AutoUpdateCheck).toBool()) {
+      m_versionChecker.checkLatest();
+      m_versionChecker.checkUpstream();
+    }
+  });
+  m_updateCheckTimer->start();
   connect(&m_versionChecker, &VersionChecker::updateFound, m_statusBar, &StatusBar::updateFound);
   connect(&m_versionChecker, &VersionChecker::updateFound, this, [this](const QString &version) {
     m_availableVersion = version;

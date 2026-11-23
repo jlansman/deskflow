@@ -28,6 +28,7 @@
 class QAction;
 class QMenu;
 class QLocalServer;
+class QTimer;
 
 class DeskflowApplication;
 class LogDock;
@@ -172,6 +173,7 @@ private:
 
   VersionChecker m_versionChecker;
   QString m_availableVersion;
+  QTimer *m_updateCheckTimer = nullptr;
   bool m_manualUpdateCheck = false;
   int m_manualCheckPending = 0;
   QStringList m_manualCheckResults;
