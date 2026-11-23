@@ -53,11 +53,11 @@ void VersionChecker::checkUpstream()
     reply->deleteLater();
     if (reply->error() != QNetworkReply::NoError) {
       qWarning("upstream check failed: %s", qPrintable(reply->errorString()));
+      Q_EMIT upstreamCheckFailed(reply->errorString());
       return;
     }
     const auto ahead = QJsonDocument::fromJson(reply->readAll()).object().value(QStringLiteral("ahead_by")).toInt();
-    if (ahead > 0)
-      Q_EMIT upstreamCommitsFound(ahead);
+    Q_EMIT upstreamCommitsFound(ahead);
   });
 }
 
@@ -68,6 +68,7 @@ void VersionChecker::replyFinished(QNetworkReply *reply)
     qWarning("version check server error: %s", qPrintable(reply->errorString()));
     qWarning("version check server response: %s", qPrintable(QString(reply->readAll())));
     qWarning("error checking for updates, http status: %d", httpStatus);
+    Q_EMIT checkFailed(reply->errorString());
     return;
   }
 
@@ -79,12 +80,14 @@ void VersionChecker::replyFinished(QNetworkReply *reply)
 
   if (newestVersion.isEmpty()) {
     qWarning() << "version check is response is empty";
+    Q_EMIT checkFailed(tr("empty response"));
     return;
   }
 
   static const QRegularExpression versionFormat(R"(^\d+\.\d+\.\d+(\.\d+)?(-\w+)?$)");
   if (!versionFormat.match(newestVersion).hasMatch()) {
     qWarning("version check response is not a version, ignoring: %s", qPrintable(newestVersion));
+    Q_EMIT checkFailed(tr("unexpected response"));
     return;
   }
 
@@ -94,6 +97,7 @@ void VersionChecker::replyFinished(QNetworkReply *reply)
     Q_EMIT updateFound(newestVersion);
   } else {
     qDebug().noquote() << QStringLiteral("current version %1 is upto date").arg(kVersion);
+    Q_EMIT upToDate();
   }
 }
 

@@ -531,6 +531,30 @@ Do you want to connect to the server?
         <translation>現在のTLS鍵長が許容される長さより小さいため、新しい2048ビット長の鍵を生成します。</translation>
     </message>
     <message>
+        <source>Update available: %1. Click &quot;Update available&quot; in the status bar.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 is up to date.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not check for a new build: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The real Deskflow has %1 new commits that are not merged yet.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Nothing new on the real Deskflow main branch.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not check the real Deskflow: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>invalid certificate, generating a new one</source>
         <translation>無効な証明書、新しい証明書を生成しています</translation>
     </message>
@@ -555,6 +579,10 @@ Do you want to connect to the server?
         <translation>サーバー設定をファイルに保存できませんでした。</translation>
     </message>
     <message>
+        <source>Check for updates</source>
+        <translation type="unfinished">更新を確認する</translation>
+    </message>
+    <message>
         <source>Start</source>
         <translation>起動</translation>
     </message>
@@ -573,6 +601,10 @@ Do you want to connect to the server?
     <message>
         <source>&lt;p&gt;Failed to connect to the server &apos;%1&apos;.&lt;/p&gt;&lt;p&gt;A Client with your name is already connected to the server.&lt;/p&gt;Please ensure that you&apos;re using a unique name and that only a single instance of the client process is running.&lt;/p&gt;</source>
         <translation>&lt;p&gt;サーバー &apos;%1&apos; への接続に失敗しました。&lt;/p&gt;&lt;p&gt;同じ名前のクライアントがサーバーに接続済です。&lt;/p&gt;&lt;p&gt;名前の重複がないことと、クライアントプロセスが多重起動していない事を確認してください。&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <source>Check for &amp;Updates</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>View &amp;Help</source>
@@ -1435,6 +1467,17 @@ Deskflow will close and restart. Windows will ask for permission to continue.</s
     </message>
     <message>
         <source>The update was not started (permission was not granted).</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>VersionChecker</name>
+    <message>
+        <source>empty response</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>unexpected response</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

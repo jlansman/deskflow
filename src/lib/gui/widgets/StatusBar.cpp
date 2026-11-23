@@ -181,6 +181,10 @@ void StatusBar::updateFound(const QString &version)
 
 void StatusBar::upstreamFound(int count)
 {
+  if (count <= 0) {
+    m_btnUpstream->setVisible(false);
+    return;
+  }
   m_btnUpstream->setText(tr("Deskflow main +%1").arg(count));
   m_btnUpstream->setToolTip(tr("The real Deskflow has %1 new commits that are not merged into Jeff Mod yet").arg(count));
   m_btnUpstream->setVisible(true);

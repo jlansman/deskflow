@@ -531,6 +531,30 @@ Do you want to connect to the server?
         <translation>您当前的 TLS 密钥长度小于允许的最小值，将生成一个新的 2048 位密钥。</translation>
     </message>
     <message>
+        <source>Update available: %1. Click &quot;Update available&quot; in the status bar.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 is up to date.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not check for a new build: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The real Deskflow has %1 new commits that are not merged yet.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Nothing new on the real Deskflow main branch.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not check the real Deskflow: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>invalid certificate, generating a new one</source>
         <translation type="unfinished">证书无效，正在生成新证书</translation>
     </message>
@@ -555,6 +579,10 @@ Do you want to connect to the server?
         <translation>无法将服务器配置保存到文件。</translation>
     </message>
     <message>
+        <source>Check for updates</source>
+        <translation type="unfinished">检查更新</translation>
+    </message>
+    <message>
         <source>Start</source>
         <translation>启动</translation>
     </message>
@@ -573,6 +601,22 @@ Do you want to connect to the server?
     <message>
         <source>&lt;p&gt;Failed to connect to the server &apos;%1&apos;.&lt;/p&gt;&lt;p&gt;A Client with your name is already connected to the server.&lt;/p&gt;Please ensure that you&apos;re using a unique name and that only a single instance of the client process is running.&lt;/p&gt;</source>
         <translation>&lt;p&gt;连接到服务器“%1”失败。&lt;/p&gt;&lt;p&gt;一个同名的客户端已连接到服务器。&lt;/p&gt;请确保您使用的名称唯一，且只有一个客户端进程实例在运行。&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <source>Missing Keyboard Layouts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;Keyboard layout support requires matching layouts on all computers. The following layouts from the other computer are not installed on this computer:&lt;/p&gt;&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Please install them to enable support for these layouts.&lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Don&apos;t show this again</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Check for &amp;Updates</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>View &amp;Help</source>
@@ -730,18 +774,6 @@ Please check if you have sufficient permissions to run %1.</source>
 Additionally, check you are able to %1 the server config file: %2</source>
         <translation type="unfinished">
 另外，请检查您是否能够%1服务器配置文件：%2</translation>
-    </message>
-    <message>
-        <source>Don&apos;t show this again</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Missing Keyboard Layouts</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;Keyboard layout support requires matching layouts on all computers. The following layouts from the other computer are not installed on this computer:&lt;/p&gt;&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Please install them to enable support for these layouts.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1435,6 +1467,17 @@ Deskflow will close and restart. Windows will ask for permission to continue.</s
     </message>
     <message>
         <source>The update was not started (permission was not granted).</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>VersionChecker</name>
+    <message>
+        <source>empty response</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>unexpected response</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

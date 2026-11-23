@@ -24,6 +24,9 @@ public Q_SLOTS:
 Q_SIGNALS:
   void updateFound(const QString &version);
   void upstreamCommitsFound(int count);
+  void upToDate();
+  void checkFailed(const QString &error);
+  void upstreamCheckFailed(const QString &error);
 
 private:
   static int compareVersions(const QString &left, const QString &right);

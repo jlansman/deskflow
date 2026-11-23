@@ -71,6 +71,7 @@ MainWindow::MainWindow()
       m_menuView{new QMenu(this)},
       m_menuHelp{new QMenu(this)},
       m_actionAbout{new QAction(this)},
+      m_actionCheckUpdates{new QAction(this)},
       m_actionMinimize{new QAction(this)},
       m_actionQuit{new QAction(this)},
       m_actionTrayQuit{new QAction(this)},
@@ -258,6 +259,7 @@ void MainWindow::connectSlots()
   connect(&m_coreProcess, &CoreProcess::securityLevelChanged, m_statusBar, &StatusBar::setSecurityLevel);
 
   connect(m_actionAbout, &QAction::triggered, this, &MainWindow::openAboutDialog);
+  connect(m_actionCheckUpdates, &QAction::triggered, this, &MainWindow::checkForUpdates);
   connect(m_actionMinimize, &QAction::triggered, this, &MainWindow::hide);
 
   connect(m_actionQuit, &QAction::triggered, this, &MainWindow::close);
@@ -310,6 +312,22 @@ void MainWindow::connectSlots()
   connect(&m_versionChecker, &VersionChecker::updateFound, m_statusBar, &StatusBar::updateFound);
   connect(&m_versionChecker, &VersionChecker::updateFound, this, [this](const QString &version) {
     m_availableVersion = version;
+    finishManualUpdateCheck(tr("Update available: %1. Click \"Update available\" in the status bar.").arg(version));
+  });
+  connect(&m_versionChecker, &VersionChecker::upToDate, this, [this]() {
+    finishManualUpdateCheck(tr("%1 is up to date.").arg(kAppName));
+  });
+  connect(&m_versionChecker, &VersionChecker::checkFailed, this, [this](const QString &error) {
+    finishManualUpdateCheck(tr("Could not check for a new build: %1").arg(error));
+  });
+  connect(&m_versionChecker, &VersionChecker::upstreamCommitsFound, this, [this](int count) {
+    finishManualUpdateCheck(
+        count > 0 ? tr("The real Deskflow has %1 new commits that are not merged yet.").arg(count)
+                  : tr("Nothing new on the real Deskflow main branch.")
+    );
+  });
+  connect(&m_versionChecker, &VersionChecker::upstreamCheckFailed, this, [this](const QString &error) {
+    finishManualUpdateCheck(tr("Could not check the real Deskflow: %1").arg(error));
   });
 
   connect(m_guiDupeChecker, &QLocalServer::newConnection, this, &MainWindow::showAndActivate);
@@ -467,6 +485,26 @@ void MainWindow::openAboutDialog()
 {
   AboutDialog about(this);
   about.exec();
+}
+
+void MainWindow::checkForUpdates()
+{
+  m_manualUpdateCheck = true;
+  m_manualCheckPending = 2;
+  m_manualCheckResults.clear();
+  m_versionChecker.checkLatest();
+  m_versionChecker.checkUpstream();
+}
+
+void MainWindow::finishManualUpdateCheck(const QString &result)
+{
+  if (!m_manualUpdateCheck)
+    return;
+  m_manualCheckResults << result;
+  if (--m_manualCheckPending > 0)
+    return;
+  m_manualUpdateCheck = false;
+  QMessageBox::information(this, tr("Check for updates"), m_manualCheckResults.join(QStringLiteral("\n\n")));
 }
 
 void MainWindow::openGetNewVersionUrl()
@@ -681,6 +719,7 @@ void MainWindow::createMenuBar()
   m_menuView->addAction(m_logDock->toggleViewAction());
 
   m_menuHelp->addAction(m_actionAbout);
+  m_menuHelp->addAction(m_actionCheckUpdates);
   m_menuHelp->addAction(m_actionShowHelp);
 
   auto menuBar = new QMenuBar(this);
@@ -1077,6 +1116,7 @@ void MainWindow::updateText()
   //: %1 will be the replaced with the appname
   m_actionAbout->setText(tr("About %1...").arg(kAppName));
 
+  m_actionCheckUpdates->setText(tr("Check for &Updates"));
   m_actionShowHelp->setText(tr("View &Help"));
 
   //: start / restart core shortcut

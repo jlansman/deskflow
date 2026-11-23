@@ -98,6 +98,8 @@ private:
   void clearSettings();
   void openAboutDialog();
   void openGetNewVersionUrl();
+  void checkForUpdates();
+  void finishManualUpdateCheck(const QString &result);
   void openSettings();
   void startCore();
   void stopCore();
@@ -169,6 +171,9 @@ private:
 
   VersionChecker m_versionChecker;
   QString m_availableVersion;
+  bool m_manualUpdateCheck = false;
+  int m_manualCheckPending = 0;
+  QStringList m_manualCheckResults;
   UpdateInstaller *m_updateInstaller = nullptr;
   bool m_secureSocket = false;
   bool m_saveOnExit = true;
@@ -196,6 +201,7 @@ private:
 
   // Window Actions
   QAction *m_actionAbout = nullptr;
+  QAction *m_actionCheckUpdates = nullptr;
   QAction *m_actionMinimize = nullptr;
   QAction *m_actionQuit = nullptr;
   QAction *m_actionTrayQuit = nullptr;

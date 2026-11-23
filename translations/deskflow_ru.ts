@@ -531,6 +531,30 @@ Do you want to connect to the server?
         <translation>Текущий ключ TLS меньше минимально допустимого размера. Будет создан новый 2048-битный ключ.</translation>
     </message>
     <message>
+        <source>Update available: %1. Click &quot;Update available&quot; in the status bar.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 is up to date.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not check for a new build: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The real Deskflow has %1 new commits that are not merged yet.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Nothing new on the real Deskflow main branch.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not check the real Deskflow: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>invalid certificate, generating a new one</source>
         <translation>недействительный сертификат, создание нового</translation>
     </message>
@@ -555,6 +579,10 @@ Do you want to connect to the server?
         <translation>Не удалось сохранить файл конфигурации сервера.</translation>
     </message>
     <message>
+        <source>Check for updates</source>
+        <translation type="unfinished">Проверить обновления</translation>
+    </message>
+    <message>
         <source>Start</source>
         <translation>Запуск</translation>
     </message>
@@ -573,6 +601,22 @@ Do you want to connect to the server?
     <message>
         <source>&lt;p&gt;Failed to connect to the server &apos;%1&apos;.&lt;/p&gt;&lt;p&gt;A Client with your name is already connected to the server.&lt;/p&gt;Please ensure that you&apos;re using a unique name and that only a single instance of the client process is running.&lt;/p&gt;</source>
         <translation>&lt;p&gt;Не удалось подключиться к серверу &apos;%1&apos;.&lt;/p&gt;&lt;p&gt;Клиент с таким именем уже подключен к серверу.&lt;/p&gt;Убедитесь, что вы используете уникальное имя и запущен только один процесс клиента.&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <source>Missing Keyboard Layouts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;Keyboard layout support requires matching layouts on all computers. The following layouts from the other computer are not installed on this computer:&lt;/p&gt;&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Please install them to enable support for these layouts.&lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Don&apos;t show this again</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Check for &amp;Updates</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>View &amp;Help</source>
@@ -730,18 +774,6 @@ Please check if you have sufficient permissions to run %1.</source>
 Additionally, check you are able to %1 the server config file: %2</source>
         <translation type="unfinished">
 Также убедитесь, что вы можете %1 файл конфигурации сервера: %2</translation>
-    </message>
-    <message>
-        <source>Don&apos;t show this again</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Missing Keyboard Layouts</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;Keyboard layout support requires matching layouts on all computers. The following layouts from the other computer are not installed on this computer:&lt;/p&gt;&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Please install them to enable support for these layouts.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1433,6 +1465,17 @@ Deskflow will close and restart. Windows will ask for permission to continue.</s
     </message>
     <message>
         <source>The update was not started (permission was not granted).</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>VersionChecker</name>
+    <message>
+        <source>empty response</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>unexpected response</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

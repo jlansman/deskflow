@@ -563,6 +563,30 @@ Vuoi connetterti al server?
         <translation>La tua chiave TLS attuale è più piccola della dimensione minima consentita. Verrà generata una nuova chiave a 2048 bit.</translation>
     </message>
     <message>
+        <source>Update available: %1. Click &quot;Update available&quot; in the status bar.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 is up to date.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not check for a new build: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The real Deskflow has %1 new commits that are not merged yet.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Nothing new on the real Deskflow main branch.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not check the real Deskflow: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Address missing</source>
         <translation>Indirizzo mancante</translation>
     </message>
@@ -583,6 +607,10 @@ Vuoi connetterti al server?
         <translation>Impossibile salvare la configurazione del server nel file.</translation>
     </message>
     <message>
+        <source>Check for updates</source>
+        <translation type="unfinished">Controlla aggiornamenti</translation>
+    </message>
+    <message>
         <source>Start</source>
         <translation>Avvia</translation>
     </message>
@@ -601,6 +629,22 @@ Vuoi connetterti al server?
     <message>
         <source>%1 Connection Error</source>
         <translation>Errore di connessione %1</translation>
+    </message>
+    <message>
+        <source>Missing Keyboard Layouts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;Keyboard layout support requires matching layouts on all computers. The following layouts from the other computer are not installed on this computer:&lt;/p&gt;&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Please install them to enable support for these layouts.&lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Don&apos;t show this again</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Check for &amp;Updates</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Invalid Computer Name</source>
@@ -730,18 +774,6 @@ Verifica di avere i permessi sufficienti per eseguire %1.</translation>
 Additionally, check you are able to %1 the server config file: %2</source>
         <translation type="unfinished">
 Inoltre, verifica di poter %1 il file di configurazione del server: %2</translation>
-    </message>
-    <message>
-        <source>Don&apos;t show this again</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Missing Keyboard Layouts</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;Keyboard layout support requires matching layouts on all computers. The following layouts from the other computer are not installed on this computer:&lt;/p&gt;&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Please install them to enable support for these layouts.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1434,6 +1466,17 @@ Deskflow will close and restart. Windows will ask for permission to continue.</s
     </message>
     <message>
         <source>The update was not started (permission was not granted).</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>VersionChecker</name>
+    <message>
+        <source>empty response</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>unexpected response</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
