@@ -10,6 +10,8 @@
 
 #include <QEvent>
 #include <QLabel>
+#include <QPainter>
+#include <QPixmap>
 #include <QPushButton>
 #include <QTimer>
 
@@ -53,7 +55,16 @@ StatusBar::StatusBar(QWidget *parent)
   m_btnUpstream->setVisible(false);
   m_btnUpstream->setFlat(true);
   m_btnUpstream->setLayoutDirection(Qt::RightToLeft);
-  m_btnUpstream->setIcon(QIcon::fromTheme(QStringLiteral("vcs-merge")));
+  QPixmap dot(iconSize);
+  dot.fill(Qt::transparent);
+  QPainter painter(&dot);
+  painter.setRenderHint(QPainter::Antialiasing);
+  painter.setPen(Qt::NoPen);
+  painter.setBrush(QColor(0x2e, 0xa0, 0x43));
+  painter.drawEllipse(dot.rect().adjusted(2, 2, -2, -2));
+  painter.end();
+  m_btnUpstream->setIcon(QIcon(dot));
+  m_btnUpstream->setStyleSheet(QStringLiteral("QPushButton { color: #2ea043; font-weight: bold; }"));
   m_btnUpstream->setFixedHeight(btnHeight);
   m_btnUpstream->setIconSize(iconSize);
   insertPermanentWidget(4, m_btnUpstream);
@@ -186,7 +197,11 @@ void StatusBar::upstreamFound(int count)
     return;
   }
   m_btnUpstream->setText(tr("Deskflow main +%1").arg(count));
-  m_btnUpstream->setToolTip(tr("The real Deskflow has %1 new commits that are not merged into Jeff Mod yet").arg(count));
+  m_btnUpstream->setToolTip(
+      tr("The real Deskflow has %1 new commits that are not merged into Jeff Mod yet. "
+         "Click to open GitHub, then press \"Run workflow\" to merge and build them.")
+          .arg(count)
+  );
   m_btnUpstream->setVisible(true);
 }
 

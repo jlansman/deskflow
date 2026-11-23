@@ -28,6 +28,9 @@ const auto kUrlUpdatePackage = QStringLiteral("%1/deskflow-jeffmod-win64.zip").a
 // commits on the real Deskflow main branch that custom/main does not have yet
 const auto kUrlUpstreamAhead =
     QStringLiteral("https://api.github.com/repos/jlansman/deskflow/compare/custom/main...deskflow:master");
+// the workflow that merges the real Deskflow main branch (Run workflow button)
+const auto kUrlUpstreamSyncPage =
+    QStringLiteral("https://github.com/jlansman/deskflow/actions/workflows/jeff-mod-upstream-sync.yml");
 const auto kUrlUpstreamAheadPage =
     QStringLiteral("https://github.com/jlansman/deskflow/compare/custom/main...deskflow:master");
 

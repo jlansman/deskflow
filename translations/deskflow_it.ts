@@ -607,6 +607,14 @@ Vuoi connetterti al server?
         <translation>Impossibile salvare la configurazione del server nel file.</translation>
     </message>
     <message>
+        <source>Deskflow main has updates</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 new commits are waiting to be merged into Jeff Mod.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Check for updates</source>
         <translation type="unfinished">Controlla aggiornamenti</translation>
     </message>
@@ -1404,7 +1412,7 @@ L&apos;abilitazione di questa impostazione disabiliterà l&apos;interfaccia graf
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>The real Deskflow has %1 new commits that are not merged into Jeff Mod yet</source>
+        <source>The real Deskflow has %1 new commits that are not merged into Jeff Mod yet. Click to open GitHub, then press &quot;Run workflow&quot; to merge and build them.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

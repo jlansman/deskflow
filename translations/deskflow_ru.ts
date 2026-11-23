@@ -579,6 +579,14 @@ Do you want to connect to the server?
         <translation>Не удалось сохранить файл конфигурации сервера.</translation>
     </message>
     <message>
+        <source>Deskflow main has updates</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 new commits are waiting to be merged into Jeff Mod.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Check for updates</source>
         <translation type="unfinished">Проверить обновления</translation>
     </message>
@@ -1403,7 +1411,7 @@ Enabling this setting will disable the server config GUI.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>The real Deskflow has %1 new commits that are not merged into Jeff Mod yet</source>
+        <source>The real Deskflow has %1 new commits that are not merged into Jeff Mod yet. Click to open GitHub, then press &quot;Run workflow&quot; to merge and build them.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

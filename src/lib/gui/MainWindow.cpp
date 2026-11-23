@@ -48,6 +48,7 @@
 #include <QRegularExpression>
 #include <QRegularExpressionValidator>
 #include <QScreen>
+#include <QSettings>
 #include <QScrollBar>
 
 #include <memory>
@@ -307,7 +308,7 @@ void MainWindow::connectSlots()
   connect(m_statusBar, &StatusBar::requestUpdateVersion, this, &MainWindow::openGetNewVersionUrl);
   connect(&m_versionChecker, &VersionChecker::upstreamCommitsFound, m_statusBar, &StatusBar::upstreamFound);
   connect(m_statusBar, &StatusBar::requestShowUpstream, this, []() {
-    QDesktopServices::openUrl(QUrl(kUrlUpstreamAheadPage));
+    QDesktopServices::openUrl(QUrl(kUrlUpstreamSyncPage));
   });
   connect(&m_versionChecker, &VersionChecker::updateFound, m_statusBar, &StatusBar::updateFound);
   connect(&m_versionChecker, &VersionChecker::updateFound, this, [this](const QString &version) {
@@ -321,6 +322,7 @@ void MainWindow::connectSlots()
     finishManualUpdateCheck(tr("Could not check for a new build: %1").arg(error));
   });
   connect(&m_versionChecker, &VersionChecker::upstreamCommitsFound, this, [this](int count) {
+    notifyUpstreamCommits(count);
     finishManualUpdateCheck(
         count > 0 ? tr("The real Deskflow has %1 new commits that are not merged yet.").arg(count)
                   : tr("Nothing new on the real Deskflow main branch.")
@@ -485,6 +487,24 @@ void MainWindow::openAboutDialog()
 {
   AboutDialog about(this);
   about.exec();
+}
+
+void MainWindow::notifyUpstreamCommits(int count)
+{
+  // tell once per new count, not on every start
+  QSettings state;
+  const auto key = QStringLiteral("jeffmod/lastUpstreamNotified");
+  if (count <= 0) {
+    state.setValue(key, 0);
+    return;
+  }
+  if (state.value(key, 0).toInt() == count || !QSystemTrayIcon::isSystemTrayAvailable())
+    return;
+  state.setValue(key, count);
+  m_trayIcon->showMessage(
+      tr("Deskflow main has updates"), tr("%1 new commits are waiting to be merged into Jeff Mod.").arg(count),
+      QSystemTrayIcon::Information, 15000
+  );
 }
 
 void MainWindow::checkForUpdates()

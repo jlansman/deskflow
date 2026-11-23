@@ -1,0 +1,111 @@
+# Jeff Mod: merge the real Deskflow main branch into custom/main, build it, and only if the build works
+# push the merge and publish the rolling "jeff-mod" release. Start it from the Actions tab with "Run workflow"
+# (the "Deskflow main +N" button in the app opens that page). A merge conflict or a failed build stops the run
+# and leaves custom/main untouched.
+
+name: Jeff Mod Upstream Sync
+
+on:
+  workflow_dispatch:
+
+# queue behind a running release build instead of cancelling it
+concurrency:
+  group: jeff-mod-release
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: windows-2022
+    timeout-minutes: 90
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout custom/main
+        uses: actions/checkout@v4
+        with:
+          ref: custom/main
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Merge upstream
+        id: merge
+        shell: bash
+        run: |
+          git config user.name "Jeff Mod Sync"
+          git config user.email "jeff-mod-sync@users.noreply.github.com"
+          git remote add upstream https://github.com/deskflow/deskflow.git
+          git fetch upstream master
+          git fetch upstream "refs/tags/v*:refs/tags/v*" || true
+          ahead=$(git rev-list --count HEAD..upstream/master)
+          echo "New upstream commits: $ahead"
+          if [ "$ahead" = "0" ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "Nothing new on the real Deskflow main branch." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          if ! git merge --no-commit --no-ff upstream/master; then
+            echo "Merge conflicts in:" | tee -a "$GITHUB_STEP_SUMMARY"
+            git diff --name-only --diff-filter=U | tee -a "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+          # keep this fork's workflows; upstream CI changes are not wanted here
+          git checkout HEAD -- .github/workflows
+          for f in $(git diff --cached --name-only --diff-filter=A -- .github/workflows); do git rm -f -q "$f"; done
+          git commit -q -m "Merge upstream/master into custom/main ($ahead commits)"
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+          echo "Merged $ahead upstream commits." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Setup VC++ environment
+        if: steps.merge.outputs.changed == 'true'
+        uses: TheMrMilchmann/setup-msvc-dev@v4
+        with:
+          arch: amd64
+          spectre: true
+
+      - name: Install dependencies
+        if: steps.merge.outputs.changed == 'true'
+        id: get-deps
+        uses: ./.github/actions/install-dependencies
+        with:
+          qt-version: 6.12
+          vcpkg-triplet: x64-windows-release
+
+      - name: Get version
+        if: steps.merge.outputs.changed == 'true'
+        uses: ./.github/actions/get-version
+
+      - name: Configure
+        if: steps.merge.outputs.changed == 'true'
+        run: cmake -Bbuild -G Ninja -DCMAKE_BUILD_TYPE=Release -DSKIP_BUILD_TESTS=ON ${{ steps.get-deps.outputs.vcpkg-cmake-config }} -DPACKAGE_VERSION_LABEL="${{ env.DESKFLOW_PACKAGE_VERSION }}"
+
+      - name: Build
+        if: steps.merge.outputs.changed == 'true'
+        run: cmake --build build --config Release -j8
+
+      - name: Package
+        if: steps.merge.outputs.changed == 'true'
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force dist | Out-Null
+          Compress-Archive -Path build/bin/* -DestinationPath dist/deskflow-jeffmod-win64.zip
+          Set-Content -Path dist/version.txt -Value $env:DESKFLOW_VERSION -NoNewline -Encoding ascii
+          Get-Content dist/version.txt
+
+      - name: Push the merge
+        if: steps.merge.outputs.changed == 'true'
+        shell: bash
+        run: |
+          git push origin HEAD:custom/main
+          git push origin --tags || true
+
+      - name: Publish rolling release
+        if: steps.merge.outputs.changed == 'true'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete jeff-mod --yes --cleanup-tag || true
+          gh release create jeff-mod dist/deskflow-jeffmod-win64.zip dist/version.txt \
+            --target "$(git rev-parse HEAD)" \
+            --title "Jeff Mod ${DESKFLOW_VERSION}" \
+            --notes "Rolling build of custom/main ($(git rev-parse --short=8 HEAD)) after merging the real Deskflow main branch, version ${DESKFLOW_VERSION}. Installed by the in-app updater."

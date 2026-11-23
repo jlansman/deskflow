@@ -99,6 +99,7 @@ private:
   void openAboutDialog();
   void openGetNewVersionUrl();
   void checkForUpdates();
+  void notifyUpstreamCommits(int count);
   void finishManualUpdateCheck(const QString &result);
   void openSettings();
   void startCore();
