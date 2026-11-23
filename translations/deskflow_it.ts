@@ -1368,6 +1368,14 @@ L&apos;abilitazione di questa impostazione disabiliterà l&apos;interfaccia graf
         <translation>È disponibile una nuova versione v%1</translation>
     </message>
     <message>
+        <source>Deskflow main +%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The real Deskflow has %1 new commits that are not merged into Jeff Mod yet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>View local fingerprint</source>
         <translation>Visualizza impronta digitale locale</translation>
     </message>

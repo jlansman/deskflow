@@ -19,6 +19,7 @@ StatusBar::StatusBar(QWidget *parent)
       m_lblSecurityIcon{new QLabel(this)},
       m_lblStatus{new QLabel(this)},
       m_btnUpdate{new QPushButton(this)},
+      m_btnUpstream{new QPushButton(this)},
       m_retryTimer{new QTimer(this)}
 {
   static const auto btnHeight = height() - 2;
@@ -48,6 +49,15 @@ StatusBar::StatusBar(QWidget *parent)
   m_btnUpdate->setIconSize(iconSize);
   insertPermanentWidget(3, m_btnUpdate);
   connect(m_btnUpdate, &QPushButton::clicked, this, &StatusBar::requestUpdateVersion);
+
+  m_btnUpstream->setVisible(false);
+  m_btnUpstream->setFlat(true);
+  m_btnUpstream->setLayoutDirection(Qt::RightToLeft);
+  m_btnUpstream->setIcon(QIcon::fromTheme(QStringLiteral("vcs-merge")));
+  m_btnUpstream->setFixedHeight(btnHeight);
+  m_btnUpstream->setIconSize(iconSize);
+  insertPermanentWidget(4, m_btnUpstream);
+  connect(m_btnUpstream, &QPushButton::clicked, this, &StatusBar::requestShowUpstream);
 
   m_retryTimer->setInterval(1000);
   m_retryTimer->setSingleShot(false);
@@ -167,6 +177,13 @@ void StatusBar::updateFound(const QString &version)
 {
   m_btnUpdate->setVisible(true);
   m_btnUpdate->setToolTip(tr("A new version v%1 is available").arg(version));
+}
+
+void StatusBar::upstreamFound(int count)
+{
+  m_btnUpstream->setText(tr("Deskflow main +%1").arg(count));
+  m_btnUpstream->setToolTip(tr("The real Deskflow has %1 new commits that are not merged into Jeff Mod yet").arg(count));
+  m_btnUpstream->setVisible(true);
 }
 
 void StatusBar::changeEvent(QEvent *e)

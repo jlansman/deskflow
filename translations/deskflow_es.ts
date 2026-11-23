@@ -1368,6 +1368,14 @@ Al habilitar esta opción, se deshabilitará la interfaz gráfica de usuario (GU
         <translation type="unfinished">Ya está disponible una nueva versión v%1</translation>
     </message>
     <message>
+        <source>Deskflow main +%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The real Deskflow has %1 new commits that are not merged into Jeff Mod yet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>View local fingerprint</source>
         <translation type="unfinished">Ver huella digital local</translation>
     </message>

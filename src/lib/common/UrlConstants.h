@@ -25,6 +25,11 @@ const auto kUrlForkRepo = QStringLiteral("https://github.com/jlansman/deskflow/t
 const auto kUrlForkRelease = QStringLiteral("https://github.com/jlansman/deskflow/releases/download/jeff-mod");
 const auto kUrlUpdateCheck = QStringLiteral("%1/version.txt").arg(kUrlForkRelease);
 const auto kUrlUpdatePackage = QStringLiteral("%1/deskflow-jeffmod-win64.zip").arg(kUrlForkRelease);
+// commits on the real Deskflow main branch that custom/main does not have yet
+const auto kUrlUpstreamAhead =
+    QStringLiteral("https://api.github.com/repos/jlansman/deskflow/compare/custom/main...deskflow:master");
+const auto kUrlUpstreamAheadPage =
+    QStringLiteral("https://github.com/jlansman/deskflow/compare/custom/main...deskflow:master");
 
 #if defined(Q_OS_LINUX)
 const auto kUrlGnomeTrayFix = QStringLiteral("https://extensions.gnome.org/extension/615/appindicator-support/");

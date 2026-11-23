@@ -1367,6 +1367,14 @@ Enabling this setting will disable the server config GUI.</source>
         <translation>Доступна новая версия v%1</translation>
     </message>
     <message>
+        <source>Deskflow main +%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The real Deskflow has %1 new commits that are not merged into Jeff Mod yet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>View local fingerprint</source>
         <translation>Показать локальный отпечаток</translation>
     </message>

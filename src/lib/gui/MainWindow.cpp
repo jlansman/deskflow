@@ -303,6 +303,10 @@ void MainWindow::connectSlots()
 
   connect(m_statusBar, &StatusBar::requestShowMyFingerprints, this, &MainWindow::showMyFingerprint);
   connect(m_statusBar, &StatusBar::requestUpdateVersion, this, &MainWindow::openGetNewVersionUrl);
+  connect(&m_versionChecker, &VersionChecker::upstreamCommitsFound, m_statusBar, &StatusBar::upstreamFound);
+  connect(m_statusBar, &StatusBar::requestShowUpstream, this, []() {
+    QDesktopServices::openUrl(QUrl(kUrlUpstreamAheadPage));
+  });
   connect(&m_versionChecker, &VersionChecker::updateFound, m_statusBar, &StatusBar::updateFound);
   connect(&m_versionChecker, &VersionChecker::updateFound, this, [this](const QString &version) {
     m_availableVersion = version;
@@ -652,6 +656,7 @@ void MainWindow::open()
 
   if (Settings::value(Settings::Gui::AutoUpdateCheck).toBool()) {
     m_versionChecker.checkLatest();
+    m_versionChecker.checkUpstream();
   } else {
     qDebug() << "skipping check for new version, disabled";
   }

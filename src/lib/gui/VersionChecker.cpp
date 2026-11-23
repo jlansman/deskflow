@@ -7,8 +7,11 @@
 #include "VersionChecker.h"
 
 #include "common/Settings.h"
+#include "common/UrlConstants.h"
 #include "common/VersionInfo.h"
 
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QLocale>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
@@ -17,7 +20,10 @@
 #include <QRegularExpression>
 #include <climits>
 
-VersionChecker::VersionChecker(QObject *parent) : QObject(parent), m_network{new QNetworkAccessManager(this)}
+VersionChecker::VersionChecker(QObject *parent)
+    : QObject(parent),
+      m_network{new QNetworkAccessManager(this)},
+      m_upstreamNetwork{new QNetworkAccessManager(this)}
 {
   connect(m_network, &QNetworkAccessManager::finished, this, &VersionChecker::replyFinished, Qt::UniqueConnection);
 }
@@ -34,6 +40,25 @@ void VersionChecker::checkLatest() const
   request.setRawHeader("X-Deskflow-Version", kVersion);
   request.setRawHeader("X-Deskflow-Language", qPrintable(QLocale::system().name()));
   m_network->get(request);
+}
+
+void VersionChecker::checkUpstream()
+{
+  auto request = QNetworkRequest(QUrl(kUrlUpstreamAhead));
+  request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
+  request.setRawHeader("Accept", "application/vnd.github+json");
+  request.setHeader(QNetworkRequest::UserAgentHeader, QStringLiteral("%1 %2").arg(kAppName, kVersion));
+  auto *reply = m_upstreamNetwork->get(request);
+  connect(reply, &QNetworkReply::finished, this, [this, reply]() {
+    reply->deleteLater();
+    if (reply->error() != QNetworkReply::NoError) {
+      qWarning("upstream check failed: %s", qPrintable(reply->errorString()));
+      return;
+    }
+    const auto ahead = QJsonDocument::fromJson(reply->readAll()).object().value(QStringLiteral("ahead_by")).toInt();
+    if (ahead > 0)
+      Q_EMIT upstreamCommitsFound(ahead);
+  });
 }
 
 void VersionChecker::replyFinished(QNetworkReply *reply)

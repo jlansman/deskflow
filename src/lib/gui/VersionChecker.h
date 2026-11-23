@@ -18,10 +18,12 @@ class VersionChecker : public QObject
 public:
   explicit VersionChecker(QObject *parent = nullptr);
   void checkLatest() const;
+  void checkUpstream();
 public Q_SLOTS:
   void replyFinished(QNetworkReply *reply);
 Q_SIGNALS:
   void updateFound(const QString &version);
+  void upstreamCommitsFound(int count);
 
 private:
   static int compareVersions(const QString &left, const QString &right);
@@ -34,4 +36,5 @@ private:
    */
   static int getStageVersion(QString stage);
   QNetworkAccessManager *m_network = nullptr;
+  QNetworkAccessManager *m_upstreamNetwork = nullptr;
 };
